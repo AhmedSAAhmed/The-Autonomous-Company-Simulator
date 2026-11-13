@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rimal Business Services | The Autonomous Company Simulator</title>
+<meta name="description" content="A small company run by four accountable AI agents on one shared ledger, live, replayable, with a human inbox.">
+<meta name="theme-color" content="#f8f7f4">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231A1815'/%3E%3Cpath d='M9 22V10h7a4 4 0 0 1 1.6 7.7L21 22h-3.6l-3-4H12v4z' fill='%23F8F7F4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Rimal Business Services">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="currentColor"/><path d="M9 22V10h7a4 4 0 0 1 1.6 7.7L21 22h-3.6l-3-4H12v4z" fill="var(--bg)"/></svg>
+      <span>Rimal</span>
+    </a>
+    <nav class="links" aria-label="Sections">
+      <a href="#inbox">Inbox</a><a href="#agents">Agents</a><a href="#compare">Compare</a>
+      <a href="#records">Records</a><a href="#replay">Replay</a><a href="#architecture">Architecture</a>
+    </nav>
+    <div class="nav-right">
+      <span class="pill" id="clock">Opening</span>
+      <button class="btn primary" id="play">Play</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<section class="wrap hero">
+  <p class="label">/// Live company</p>
+  <h1>A company that <em>runs itself</em>, and knows when to ask</h1>
+  <p class="lede">Rimal Business Services is a Gulf B2B services firm staffed by four AI agents. They share one ledger, react to a live market, cover for each other when one fails, and send a human only the decisions they are not allowed to make.</p>
+  <div class="controls">
+    <button class="btn" id="next-day">Next day</button>
+    <button class="btn" id="run-week">Run the week</button>
+    <span class="seg" role="group" aria-label="Speed">
+      <button data-speed="1">1x</button><button data-speed="2">2x</button><button data-speed="4">4x</button>
+    </span>
+    <button class="btn ghost" id="reset">Reset company</button>
+    <span class="status" id="status"></span>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="kpis" id="kpis"></div>
+  <p class="legend"><span class="key solid"></span>Adaptive company <span class="key dashed"></span>Static baseline: same market and roles, fixed playbook, no signals between roles, no human inbox</p>
+</section>
+
+<section class="wrap two">
+  <div>
+    <div id="inbox" class="anchor">
+      <p class="label">/// Human inbox</p>
+      <h2>Only what the agents <em>may not decide</em></h2>
+      <div id="inbox-list" class="stack"></div>
+      <div id="decided" class="decided"></div>
+    </div>
+    <div id="agents" class="anchor">
+      <p class="label">/// Agents</p>
+      <h2>Four roles, <em>one ledger</em></h2>
+      <p class="sub">Switch one off to run the failure test. The watchdog notices after two missed heartbeats.</p>
+      <div id="agent-list" class="agents"></div>
+    </div>
+  </div>
+  <div>
+    <p class="label">/// Event stream</p>
+    <h2>Everything that <em>just happened</em></h2>
+    <div class="filters" id="filters">
+      <button data-f="all" class="on">All</button><button data-f="signal">Signals</button>
+      <button data-f="human">Human</button><button data-f="bad">Problems</button>
+    </div>
+    <ol id="feed" class="feed" aria-live="polite"></ol>
+  </div>
+</section>
+
+<section class="wrap anchor" id="compare">
+  <p class="label">/// Adaptive vs. baseline</p>
+  <h2>Same market, same luck, <em>different company</em></h2>
+  <p class="sub">Both companies get identical leads, payments and failures from one seed. The baseline follows a fixed playbook. The adaptive one listens to its own signals.</p>
+  <div class="charts" id="charts"></div>
+</section>
+
+<section class="wrap anchor" id="records">
+  <p class="label">/// Shared records</p>
+  <h2>The ledger every agent <em>reads and writes</em></h2>
+  <div class="tabs" id="tabs"></div>
+  <div class="table-wrap" id="table"></div>
+</section>
+
+<section class="wrap anchor" id="replay">
+  <p class="label">/// Replay</p>
+  <h2>Rebuild any day <em>from the log</em></h2>
+  <p class="sub">State is never edited directly. It is a fold of an append-only event log in SQLite, so any closed day can be rebuilt and checked against the hash recorded live.</p>
+  <div class="controls">
+    <select id="replay-day" aria-label="Day to replay"></select>
+    <button class="btn primary" id="replay-go">Replay day</button>
+  </div>
+  <div id="replay-out"></div>
+</section>
+
+<section class="wrap anchor" id="architecture">
+  <p class="label">/// Architecture</p>
+  <h2>How the company is <em>wired</em></h2>
+  <div class="arch">
+    <div class="arch-row">
+      <div class="box"><b>Market stream</b><span>Leads, payments, tickets, demand spikes. Seeded, so both companies face the same world.</span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="box dark"><b>Event bus</b><span>Every change is an event. Each agent has a durable mailbox, so nothing is lost while it is down.</span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="box"><b>Shared ledger</b><span>Append-only log in SQLite. Records are a fold of the log: leads, customers, jobs, invoices, tickets.</span></div>
+    </div>
+    <div class="arch-row four">
+      <div class="box"><b>Sales</b><span>Qualifies, prices, closes. Throttles when Ops is full.</span></div>
+      <div class="box"><b>Ops</b><span>Delivers jobs. Raises capacity alerts, asks for budget.</span></div>
+      <div class="box"><b>Finance</b><span>Invoices, chases, approves spend, guards runway.</span></div>
+      <div class="box"><b>Support</b><span>Triages tickets, retains unhappy customers.</span></div>
+    </div>
+    <div class="arch-row">
+      <div class="box"><b>Watchdog</b><span>Counts heartbeats. Tells every agent when a colleague goes silent.</span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="box dark"><b>Human inbox</b><span>Decisions above an agent's authority. Unanswered items take a safe default.</span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="box"><b>Replay</b><span>Fold the log to any day and compare hashes.</span></div>
+    </div>
+  </div>
+  <div class="two tight">
+    <div>
+      <h3>Escalation rules</h3>
+      <div class="table-wrap"><table id="rules"></table></div>
+    </div>
+    <div>
+      <h3>Where a human is still needed</h3>
+      <ul class="plain">
+        <li><b>Pricing exceptions.</b> Deep discounts on large retainers trade margin for growth. That is a strategy call.</li>
+        <li><b>Writing off debt.</b> Finance never forgives money owed on its own.</li>
+        <li><b>Spend beyond authority.</b> Anything above 15% of cash, or with a short runway.</li>
+        <li><b>Restarting a failed role.</b> The agents cover; a person decides whether to bring it back.</li>
+        <li><b>Everything outside the model.</b> Hiring, contracts, regulators and relationships are not simulated here, and would stay human.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="wrap foot">
+  <span>Rimal Business Services is a fictional company. Built for the Autonomous Company Simulator challenge.</span>
+  <span id="foot-meta"></span>
+</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>
