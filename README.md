@@ -4,7 +4,7 @@ A small company that runs as a loop of accountable AI agents on one shared ledge
 
 **Rimal Business Services** is a fictional Gulf B2B services firm (payroll, bookkeeping, licensing, HR, visa processing on monthly retainers). Four agents run it hour by hour against a live market stream. They read and write the same records, signal each other, cover for each other when one fails, and send a human only the decisions they are not allowed to make.
 
-- **Live demo:** _add your Render URL here_
+- **Live demo:** [_add your Render URL here_](https://autonomous-company-simulator.onrender.com)
 - **Thesis:** [docs/thesis.md](docs/thesis.md)
 
 > The demo is hosted on Render's free tier, which sleeps after 15 minutes without traffic. The first request after a sleep takes about a minute. The company is shared: everyone who opens the link watches and steers the same run.
